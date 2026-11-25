@@ -1,0 +1,25 @@
+# แพ็กเกจที่ติดตั้ง (ติดตั้งใหม่ได้ด้วย npm ci)
+node_modules/
+
+# ค่าลับและค่าตั้งค่าจริง (แต่ยังเก็บไฟล์ .env.example ไว้ใน repo)
+.env
+.env.*
+!.env.example
+!*.example
+
+# โฟลเดอร์เก็บรูปที่อัปโหลด (ตั้งค่า path ได้ผ่าน UPLOAD_DIR)
+uploads/
+
+# ไฟล์ log
+*.log
+logs/
+npm-debug.log*
+
+# ไฟล์ที่ Next.js สร้างตอน build/dev
+.next/
+out/
+next-env.d.ts
+
+# ไฟล์ของระบบปฏิบัติการ/editor
+.DS_Store
+Thumbs.db

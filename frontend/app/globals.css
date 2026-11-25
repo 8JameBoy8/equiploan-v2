@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+/* ใช้ฟอนต์ Noto Sans Thai (โหลดใน app/layout.js) เป็นฟอนต์หลัก */
+@theme {
+  --font-sans: var(--font-noto-thai), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* พื้นหลังไล่เฉดฟ้าอ่อน + เส้นโค้งจางๆ (SVG ในโค้ด ไม่ใช้ไฟล์รูป) */
+body {
+  min-height: 100vh;
+  color: #1e293b;
+  background-color: #eaf2ff;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' preserveAspectRatio='none'%3E%3Cpath d='M0 640 C 320 560 520 760 860 690 C 1120 640 1260 520 1440 560 L1440 900 L0 900 Z' fill='%23dbe8ff' fill-opacity='0.7'/%3E%3Cpath d='M0 120 C 260 40 420 200 700 150 C 980 100 1180 0 1440 60 L1440 0 L0 0 Z' fill='%23ffffff' fill-opacity='0.55'/%3E%3C/svg%3E"),
+    linear-gradient(160deg, #f3f8ff 0%, #e3eeff 50%, #d6e6ff 100%);
+  background-size: 100% 100%, 100% 100%;
+  background-attachment: fixed;
+}
+
+/* ชิ้นส่วน UI ที่ใช้ซ้ำทุกหน้า — เขียนเป็นชื่อสั้นๆ จะได้แก้สไตล์ที่จุดเดียว */
+@layer components {
+  /* การ์ดสีขาวมุมโค้ง เงาฟ้าอ่อน */
+  .card {
+    @apply rounded-3xl bg-white shadow-[0_8px_30px_-12px_rgba(30,64,175,0.18)] ring-1 ring-blue-100/60;
+  }
+
+  /* ปุ่มหลัก: สีฟ้าเข้ม */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-2.5 font-semibold text-white
+      shadow-sm shadow-blue-700/30 transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  /* ปุ่มรอง: ขอบฟ้า พื้นขาว */
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-blue-700 bg-white px-5 py-2.5 font-semibold
+      text-blue-700 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  /* ปุ่มอันตราย (ปฏิเสธ): ขอบแดง */
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-red-300 bg-white px-5 py-2.5 font-semibold
+      text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  /* ปุ่มขนาดเล็ก (ใช้ในตาราง) */
+  .btn-sm {
+    @apply rounded-lg px-3 py-1.5 text-sm;
+  }
+
+  /* ช่องกรอกข้อมูล */
+  .input {
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 outline-none transition
+      placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100;
+  }
+  /* ชื่อช่องกรอก */
+  .label {
+    @apply font-medium text-slate-700;
+  }
+}
