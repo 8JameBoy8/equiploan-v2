@@ -1,0 +1,86 @@
+# รวมทุก container ของระบบ (ใช้ทดลองบนเครื่องเดียว)
+# วิธีใช้: docker compose --env-file .env.docker up -d --build
+name: equiploan-v2
+
+services:
+  # ฐานข้อมูล: ไม่เปิดพอร์ตออกนอก Docker เรียกได้จาก container อื่นเท่านั้น
+  db:
+    image: postgres:17.12-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: equiploan
+      POSTGRES_DB: equiploan
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?ต้องตั้งใน .env.docker}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      # -h 127.0.0.1: ไม่ให้ผ่านตอน PostgreSQL ยังเตรียมข้อมูลครั้งแรกไม่เสร็จ
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U equiploan -d equiploan"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # สร้างตารางแล้วจบการทำงาน (รันซ้ำได้ ข้อมูลเดิมไม่หาย)
+  db-init:
+    image: equiploan-v2-backend
+    build: &backend-build
+      context: .
+      dockerfile: backend/Dockerfile
+    command: ["node", "scripts/db-init.js"]
+    environment: &backend-env
+      PORT: 4000
+      DATABASE_URL: postgres://equiploan:${POSTGRES_PASSWORD}@db:5432/equiploan
+      JWT_SECRET: ${JWT_SECRET:?ต้องตั้งใน .env.docker}
+      COOKIE_SECURE: "false" # ยังใช้ HTTP
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?ต้องตั้งใน .env.docker}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ต้องตั้งใน .env.docker}
+      ADMIN_NAME: ${ADMIN_NAME:-ผู้ดูแลระบบ}
+      UPLOAD_DIR: /data/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+  backend:
+    image: equiploan-v2-backend
+    build: *backend-build
+    restart: unless-stopped
+    init: true # ให้ container หยุดได้ทันทีเมื่อสั่ง stop
+    environment: *backend-env
+    volumes:
+      - uploads:/data/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully # มีตารางก่อน จึงสร้าง admin ได้
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:4000/readyz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # หน้าเว็บ: ส่วนเดียวที่เปิดพอร์ตออกมา (เฉพาะในเครื่องนี้)
+  frontend:
+    image: equiploan-v2-frontend
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        BACKEND_URL: http://backend:4000
+    restart: unless-stopped
+    init: true
+    ports:
+      - "127.0.0.1:8080:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/login"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+# ที่เก็บข้อมูลถาวร: ลบ container แล้วข้อมูลยังอยู่
+volumes:
+  db-data:
+  uploads:

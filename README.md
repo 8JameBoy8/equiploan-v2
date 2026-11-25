@@ -200,3 +200,31 @@ curl -s -w " [%{http_code}]\n" -b m2.txt localhost:4000/api/loans/<ID>/return-im
    (เช่นเดียวกับอุปกรณ์ที่ถูกยืมอยู่) ปฏิเสธคำขอหรือรอให้คืนก่อนจึงลบได้
 3. ลบอุปกรณ์ที่เคยมีคำขอที่คืนแล้ว → ล็อกอิน member → "คำขอของฉัน" ยังเห็นคำขอนั้นพร้อมชื่ออุปกรณ์
 4. member เรียก `DELETE /api/equipment/:id` เอง → 403 (BE ตรวจสิทธิ์ ไม่ใช่แค่ซ่อนปุ่ม)
+
+## รันด้วย Docker (ทดลองบนเครื่องเดียว)
+
+ต้องเปิด Docker Desktop ก่อน ใช้ฐานข้อมูลและรูปคนละชุดกับแบบ `npm run dev` และรันพร้อมกันได้
+
+```powershell
+copy .env.docker.example .env.docker
+```
+แก้ค่า `CHANGE_ME` ใน `.env.docker` ให้ครบ แล้วรัน (ครั้งแรกต้องใช้อินเทอร์เน็ต):
+
+```powershell
+docker compose --env-file .env.docker up -d --build --wait
+```
+```powershell
+docker compose --env-file .env.docker exec backend npm run db:seed
+```
+เปิดเว็บที่ http://localhost:8080 (เปิดได้จากเครื่องนี้เท่านั้น)
+
+| ต้องการ | คำสั่ง |
+|---|---|
+| ดูสถานะ | `docker compose --env-file .env.docker ps -a` |
+| ดู log ของ backend | `docker compose --env-file .env.docker logs -f backend` |
+| หยุดและลบ container (ข้อมูลยังอยู่) | `docker compose --env-file .env.docker down` |
+| ใช้โค้ดใหม่หลังแก้ | รันคำสั่ง `up -d --build --wait` อีกครั้ง |
+
+- `db-init` แสดงสถานะ Exited (0) เป็นเรื่องปกติ เพราะสร้างตารางเสร็จแล้วจบ
+- **ห้ามใส่ `-v` ต่อท้าย `down`** ถ้าไม่ต้องการลบข้อมูลและรูปทั้งหมดใน Docker
+- เปลี่ยน `POSTGRES_PASSWORD` หรือ `ADMIN_PASSWORD` ใน `.env.docker` ภายหลัง ไม่เปลี่ยนรหัสที่สร้างไว้แล้ว

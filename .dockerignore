@@ -1,0 +1,10 @@
+# ไฟล์ที่ไม่ส่งเข้าไปตอน build image (กันค่าลับและลดขนาด)
+**/node_modules
+**/.next
+**/.env
+**/.env.*
+**/uploads
+**/*.log
+.git
+.claude
+docs

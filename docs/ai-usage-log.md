@@ -203,3 +203,23 @@
 - [ ] ให้อาจารย์ดูแบบก่อนลงมือ และยืนยันว่าเครื่องมือตรงกับที่สอน
 - [ ] ตัดสินใจหัวข้อ 14 ให้ครบ
 - [ ] ทุกคนอธิบายภาพรวม (หัวข้อ 1–3) และกรณีล่ม (หัวข้อ 9) ได้
+
+## เฟส Docker — รันด้วย Docker Compose บนเครื่องเดียว (2026-11-25)
+
+### สิ่งที่ AI สร้าง/แก้
+- `frontend/Dockerfile`, `backend/Dockerfile`, `.dockerignore`, `compose.yaml`, `.env.docker.example`
+  (`.env.docker` มีค่าสุ่ม อยู่เฉพาะในเครื่อง ไม่ commit)
+- `backend/src/db.js` รับ event `error` ของ pool, `frontend/next.config.mjs` เพิ่ม `output` จาก `NEXT_OUTPUT`
+- `CLAUDE.md` ปรับเฟสให้ทำ Docker ได้ (ยังห้าม Kubernetes/VM), README, `docs/infrastructure.md` ระบุว่าเป็นแบบร่าง
+
+### ผลการทดสอบที่ AI รันแล้ว
+- ทุก container healthy, สมัคร/ล็อกอิน → ยืม → อนุมัติ → คืนพร้อมรูป 3MB, รูป 6MB → 413, member เข้า admin → 403
+- ลบและสร้าง container ใหม่: ข้อมูลและรูปยังอยู่; รีสตาร์ต DB: backend ไม่หยุดและใช้งานต่อได้
+- FE/BE รันด้วยผู้ใช้ `node`, ไม่พบค่าลับใน image, เปิดพอร์ตเฉพาะ 127.0.0.1:8080
+- รันแบบเดิมบน Windows (FE/BE) ยังเปิดได้ และ rewrites ทำงาน
+- ลบข้อมูลทดสอบแล้ว เหลือ admin และอุปกรณ์สมมติ 10 ชิ้นใน Docker
+
+### มนุษย์ต้องตรวจ
+- [ ] อธิบายแต่ละบรรทัดใน Dockerfile ทั้งสองและ compose.yaml ได้
+- [ ] เพื่อนในทีมลองรันตาม README บนเครื่องของตัวเอง
+- [ ] ใช้งานผ่านเบราว์เซอร์จริงที่ http://localhost:8080 (AI ทดสอบ workflow ผ่าน API และดูหน้า login)

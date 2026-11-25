@@ -5,8 +5,9 @@
 
 ## เฟสปัจจุบัน
 - พัฒนาและรันบนเครื่อง Windows เท่านั้น เป้าหมายคือให้ FE, BE, DB ทำงานร่วมกันได้
-- ห้ามสร้าง Dockerfile, manifests ของ Kubernetes หรืออะไรที่เกี่ยวกับการ deploy/VM
-  จนกว่าฉันจะสั่ง (อาจารย์ให้ชะลอเรื่องนี้)
+- ทดลองรันด้วย Docker Compose บนเครื่องเดียวได้ (Dockerfile แยก FE/BE, compose.yaml)
+- ห้ามสร้าง manifests ของ Kubernetes หรืออะไรที่เกี่ยวกับการ deploy/VM
+  จนกว่าฉันจะสั่ง (docs/infrastructure.md เป็นแบบร่างคร่าวๆ เท่านั้น)
 - PostgreSQL รันบนเครื่อง ให้ถามฉันก่อนว่าจะติดตั้งตรงหรือรันด้วย docker run
 
 ## สถาปัตยกรรม (แยกกันชัดเจน 3 ส่วน)
@@ -57,5 +58,5 @@
 - หลังจบแต่ละเฟส เพิ่มบันทึกลง docs/ai-usage-log.md ว่าสร้างอะไรและมนุษย์ต้องตรวจอะไร
 
 ## เฟสถัดไป (ยังไม่ต้องทำ)
-- Docker และ Kubernetes deploy ตามสไลด์วิชา: Dockerfile แยก FE/BE, ConfigMap/Secret,
+- Kubernetes deploy ตามสไลด์วิชา: ConfigMap/Secret,
   PVC สำหรับ DB และโฟลเดอร์รูป, health probes

@@ -4,6 +4,8 @@
 const backendUrl = process.env.BACKEND_URL || 'http://localhost:4000';
 
 const nextConfig = {
+  // Dockerfile ตั้งเป็น 'standalone' ส่วนตอนรันปกติไม่ตั้งค่านี้
+  output: process.env.NEXT_OUTPUT,
   async rewrites() {
     return [
       {
